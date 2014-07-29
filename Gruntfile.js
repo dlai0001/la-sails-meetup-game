@@ -132,30 +132,44 @@ module.exports = function (grunt) {
   grunt.loadTasks(depsPath + '/grunt-contrib-uglify/tasks');
   grunt.loadTasks(depsPath + '/grunt-contrib-cssmin/tasks');
   grunt.loadTasks(depsPath + '/grunt-contrib-less/tasks');
-  grunt.loadTasks(depsPath + '/grunt-contrib-coffee/tasks');
+  grunt.loadTasks(depsPath + '/grunt-contrib-coffee/tasks');  
+
+   grunt.loadNpmTasks('grunt-shell');
 
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    shell: {
+      emberBuild: {
+        command: 'ember build'
+      }
+    },
+
     copy: {
       dev: {
         files: [
           {
-          expand: true,
-          cwd: './assets',
-          src: ['**/*.!(coffee)'],
-          dest: '.tmp/public'
-        }
+            expand: true,
+            cwd: './assets',
+            src: ['**/*.!(coffee)'],
+            dest: '.tmp/public'
+          },
+          {
+            expand: true,
+            cwd: './dist',
+            src: ['**/*.!(coffee)'],
+            dest: '.tmp/public'
+          }
         ]
       },
       build: {
         files: [
           {
-          expand: true,
-          cwd: '.tmp/public',
-          src: ['**/*'],
-          dest: 'www'
+            expand: true,
+            cwd: '.tmp/public',
+            src: ['**/*'],
+            dest: 'www'
         }
         ]
       }
@@ -420,6 +434,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('compileAssets', [
+    'ember_build',
     'clean:dev',
     'jst:dev',
     'less:dev',
@@ -481,4 +496,8 @@ module.exports = function (grunt) {
   //     console.error(filepath + ' has ' + action + ', but could not signal the Sails.js server: ' + e.message);
   //   });
   // });
+
+  grunt.registerTask('ember_build',['shell:emberBuild']);
+
+
 };
