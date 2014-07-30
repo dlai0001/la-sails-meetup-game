@@ -30,11 +30,23 @@ Steps so Far...
   			return;
 		}
 
-6. Installed grunt-shell task.  We will use this to call the "ember build" command in our build scripts.
+6. Configure the EmberJS application to use Hash routing.  This is because since the SailsJS app is doing the routing, we want to use Hash routing on the Ember app to not to confuse it. (at least until we implement a feature to handle custom routing logic).  Modify the `/configs/environment.js` file.
+
+		module.exports = function(environment) {
+			var ENV = {
+		    	environment: environment,
+		    	baseURL: '/',
+		    	locationType: 'hash',	// UPDATE THIS SETTING TO USE 'hash'
+		    	EmberENV: {
+		      		FEATURES: {
+		      	...
+
+
+7. Installed grunt-shell task.  We will use this to call the "ember build" command in our build scripts.
 
 		npm install --save-dev grunt-shell
 
-7. Create our grunt task to build and include our ember application when we build our SailsJS application. Add the following to your Gruntfile.js
+8. Create our grunt task to build and include our ember application when we build our SailsJS application. Add the following to your Gruntfile.js
 
 			// INCLUDE THE 'grunt-shell' MODULE FOR RUNNING OUR 'ember build' CLI COMMAND.
 		   	grunt.loadNpmTasks('grunt-shell');
@@ -66,6 +78,7 @@ Steps so Far...
 			    'coffee:dev'
 			  ]);
 
+9. Added an image file under /public/images to represent our monster.
 
 
 ** Node JS Meetup Day1 **
@@ -80,3 +93,12 @@ To git checkout "lessons/day1"
 		## callbacks a lot easier to work with.
 		$> npm install promised-io --save
 
+		## We'll also be installing an ember-sails-adapter to allow our 
+		## ember MVC client to connect to our SailsJS backend.
+		$> bower install ember-data-sails-adapter	
+
+
+2. Generate a model and controller to represent our monster.
+
+		$> sailsjs generate model monster
+		$> sailsjs generate controller monster
