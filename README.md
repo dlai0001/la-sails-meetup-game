@@ -141,29 +141,30 @@ To git checkout "lessons/day1"
 
 2. Edit the `Brockfile.js` to include the Ember-Sails adapter.
 
-    ...
-    // Include Ember Data Sails Adapter import statement before the `app.toTree()`
-    app.import('vendor/ember-data-sails-adapter/ember-data-sails-adapter.js');
-    ...
-    module.exports = app.toTree();
+      ...
+      // Include Ember Data Sails Adapter import statement before the `app.toTree()`
+      app.import('vendor/ember-data-sails-adapter/ember-data-sails-adapter.js');
+      ...
+      module.exports = app.toTree();
+      
 
 4. Generate / Add the ember-sails `application` adapter to the ember app.
 
-    $> ember generate adapter application
+      $> ember generate adapter application
 
   Change `/app/adapters/application.js` to use the SailsSocketAdapter.
 
-    import DS from 'ember-data';
+      import DS from 'ember-data';
 
-    export default DS.SailsSocketAdapter.extend({
+      export default DS.SailsSocketAdapter.extend({
 
-    });
+      });
 
 
 
 5. Genrate / Add a `serializer` for the ember app.
 
-    $> ember generate serializer application
+      $> ember generate serializer application
 
   Change `/app/serializers/application.js` to use explicitly use the JSON serializer.
 
