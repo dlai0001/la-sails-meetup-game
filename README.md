@@ -139,11 +139,63 @@ To git checkout "lessons/day1"
 		$> bower install ember-data-sails-adapter	
 
 
-2. Generate a model and controller to represent our monster.
+2. Edit the `Brockfile.js` to include the Ember-Sails adapter.
 
-		$> sailsjs generate model monster
-		$> sailsjs generate controller monster
+    ...
+    // Include Ember Data Sails Adapter import statement before the `app.toTree()`
+    app.import('vendor/ember-data-sails-adapter/ember-data-sails-adapter.js');
+    ...
+    module.exports = app.toTree();
 
+4. Generate / Add the ember-sails `application` adapter to the ember app.
+
+    $> ember generate adapter application
+
+  Change `/app/adapters/application.js` to use the SailsSocketAdapter.
+
+    import DS from 'ember-data';
+
+    export default DS.SailsSocketAdapter.extend({
+
+    });
+
+
+
+5. Genrate / Add a `serializer` for the ember app.
+
+    $> ember generate serializer application
+
+  Change `/app/serializers/application.js` to use explicitly use the JSON serializer.
+
+    import DS from 'ember-data';
+
+    export default = DS.JSONSerializer.extend({
+      
+      extractArray: function(store, type, arrayPayload) {
+        var serializer = this;
+        return Ember.ArrayPolyfills.map.call(arrayPayload, function(singlePayload) {
+          return serializer.extractSingle(store, type, singlePayload);
+        });
+      },
+
+      serializeIntoHash: function(hash, type, record, options) {
+        Ember.merge(hash, this.serialize(record, options));
+      }
+
+    });
+
+
+3. Generate a sails model and controller to represent our monster.
+
+		$> sails generate model monster
+		$> sails generate controller monster
+
+
+
+
+4. Generate the ember model for monster.
+
+    $> ember generate model monster
 
 
 
