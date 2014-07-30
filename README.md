@@ -10,21 +10,25 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
 
 1. Installed and setup necessary CLI tools.  These include generators for Sails and Ember that we use to create this project.  Bower is used to manage the client side package dependencies.
 
-	sudo npm install -g sails
-	sudo npm install -g ember-cli
-	sudo npm install -g bower
+		sudo npm install -g sails
+		sudo npm install -g ember-cli
+		sudo npm install -g bower
+
 
 2. Created a new Sails App.
 	
-	"sailsjs new AppName"
+		sailsjs new AppName
+
 
 3. Created a Ember Client application in a separate folder.
 
 		$> ember new AppName
 
+
 4. Copied over ember files from the Ember app to the SailsJS app.
 
 5. Edit your `packages.json` file to merge together the dev dependencies of the SailsJS and EmberJS projects.
+
 
 		...
 		"dependencies": {
@@ -50,7 +54,9 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
 		  },
 		...
 
-Then run the install packages command for both npm and bower, to download all the project dependencies.
+
+
+	Then run the install packages command for both npm and bower, to download all the project dependencies.
 
 		$> npm install
 		$> bower install
