@@ -170,7 +170,7 @@ To git checkout "lessons/day1"
     import DS from 'ember-data';
 
     export default = DS.JSONSerializer.extend({
-      
+
       extractArray: function(store, type, arrayPayload) {
         var serializer = this;
         return Ember.ArrayPolyfills.map.call(arrayPayload, function(singlePayload) {
@@ -181,7 +181,6 @@ To git checkout "lessons/day1"
       serializeIntoHash: function(hash, type, record, options) {
         Ember.merge(hash, this.serialize(record, options));
       }
-
     });
 
 
