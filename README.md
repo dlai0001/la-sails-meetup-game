@@ -120,35 +120,27 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
 
 10. Added an image file under `/public/images` to represent our monster.
 
+11. Install a few libraries we'll be using.
 
-SailsJS Build A Game Series - Day1
-----------------------------------
-
-Goal: Create a world with 10 monsters moving around.  When we open the page, we will see 10 monsters moving around the screen in sync with the server in near real time.
-
-To git checkout "lessons/day1"
-
-1. First let's install a few libraries we'll be using for this lesson.
-
-		## Promises makes JavaScript code with nested 
+		## Promises makes JavaScript code with nested
 		## callbacks a lot easier to work with.
 		$> npm install promised-io --save
 
-		## We'll also be installing an ember-sails-adapter to allow our 
+		## We'll also be installing an ember-sails-adapter to allow our
 		## ember MVC client to connect to our SailsJS backend.
-		$> bower install ember-data-sails-adapter	
+		$> bower install ember-data-sails-adapter --save
 
 
-2. Edit the `Brockfile.js` to include the Ember-Sails adapter.
+12. Edit the `Brockfile.js` to include the Ember-Sails adapter.
 
       ...
       // Include Ember Data Sails Adapter import statement before the `app.toTree()`
       app.import('vendor/ember-data-sails-adapter/ember-data-sails-adapter.js');
       ...
       module.exports = app.toTree();
-      
 
-4. Generate / Add the ember-sails `application` adapter to the ember app.
+
+13. Generate / Add the ember-sails `application` adapter to the ember app.
 
       $> ember generate adapter application
 
@@ -162,7 +154,7 @@ To git checkout "lessons/day1"
 
 
 
-5. Genrate / Add a `serializer` for the ember app.
+14. Genrate / Add a `serializer` for the ember app.
 
       $> ember generate serializer application
 
@@ -185,15 +177,22 @@ To git checkout "lessons/day1"
       });
 
 
-3. Generate a sails model and controller to represent our monster.
+
+SailsJS Build A Game Series - Day1
+----------------------------------
+
+Goal: Create a world with 10 monsters moving around.  When we open the page, we will see 10 monsters moving around the screen in sync with the server in near real time.
+
+To git checkout "lessons/day1"
+
+
+1. Generate a sails model and controller to represent our monster.
 
 		$> sails generate model monster
 		$> sails generate controller monster
 
 
-
-
-4. Generate the ember model for monster.
+2. Generate the ember model for monster.
 
     $> ember generate model monster
 
