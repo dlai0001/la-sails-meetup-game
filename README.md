@@ -86,7 +86,7 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
 
 		npm install --save-dev grunt-shell
 
-9. Create our grunt task to build and include our ember application when we build our SailsJS application. Add the following to your Gruntfile.js
+9. Create our grunt task to build and include our ember application when we build our SailsJS application. Add the following to your `Gruntfile.js`
 
 			// INCLUDE THE 'grunt-shell' MODULE FOR RUNNING OUR 'ember build' CLI COMMAND.
 		   	grunt.loadNpmTasks('grunt-shell');
@@ -118,7 +118,7 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
 			    'coffee:dev'
 			  ]);
 
-10. Added an image file under /public/images to represent our monster.
+10. Added an image file under `/public/images` to represent our monster.
 
 
 SailsJS Build A Game Series - Day1
@@ -128,7 +128,7 @@ Goal: Create a world with 10 monsters moving around.  When we open the page, we 
 
 To git checkout "lessons/day1"
 
-1. Let's install a few libraries we'll be using.
+1. First let's install a few libraries we'll be using for this lesson.
 
 		## Promises makes JavaScript code with nested 
 		## callbacks a lot easier to work with.
@@ -143,3 +143,7 @@ To git checkout "lessons/day1"
 
 		$> sailsjs generate model monster
 		$> sailsjs generate controller monster
+
+
+
+
