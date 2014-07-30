@@ -167,21 +167,21 @@ To git checkout "lessons/day1"
 
   Change `/app/serializers/application.js` to use explicitly use the JSON serializer.
 
-    import DS from 'ember-data';
+      import DS from 'ember-data';
 
-    export default = DS.JSONSerializer.extend({
+      export default = DS.JSONSerializer.extend({
 
-      extractArray: function(store, type, arrayPayload) {
-        var serializer = this;
-        return Ember.ArrayPolyfills.map.call(arrayPayload, function(singlePayload) {
-          return serializer.extractSingle(store, type, singlePayload);
-        });
-      },
+        extractArray: function(store, type, arrayPayload) {
+          var serializer = this;
+          return Ember.ArrayPolyfills.map.call(arrayPayload, function(singlePayload) {
+            return serializer.extractSingle(store, type, singlePayload);
+          });
+        },
 
-      serializeIntoHash: function(hash, type, record, options) {
-        Ember.merge(hash, this.serialize(record, options));
-      }
-    });
+        serializeIntoHash: function(hash, type, record, options) {
+          Ember.merge(hash, this.serialize(record, options));
+        }
+      });
 
 
 3. Generate a sails model and controller to represent our monster.
