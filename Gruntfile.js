@@ -415,6 +415,7 @@ module.exports = function (grunt) {
         // API files to watch:
         files: ['api/**/*']
       },
+      //TODO: create a watcher to detect changes in ember client.
       assets: {
 
         // Assets to watch:

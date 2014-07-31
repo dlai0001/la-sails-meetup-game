@@ -339,3 +339,16 @@ request.
         	}
         });
 
+
+4. We will now work on displaying our monster in our client side app at the
+coordinates in the model.
+
+  Start first by generating a controller for our monster and an array controller
+  for our monsters.
+
+        $> ember generate controller index
+        $> ember generate controller monster
+
+  In the index controller, make it a `Ember.ArrayController`, and set the item
+  controller to our monster controller.
+
