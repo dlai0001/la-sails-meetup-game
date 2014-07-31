@@ -5,6 +5,7 @@
   "description": "a Sails application",
   "dependencies": {
     "ejs": "0.8.4",
+    "events": "^1.0.1",
     "grunt": "0.4.1",
     "optimist": "0.3.4",
     "promised-io": "^0.3.4",
