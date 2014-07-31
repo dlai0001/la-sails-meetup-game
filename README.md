@@ -191,10 +191,13 @@ To git checkout "lessons/day1"
 		$> sails generate model monster
 		$> sails generate controller monster
 
+  Add x,y property to our monster model.
+
+
+
 
 2. Generate the ember model for monster.
 
     $> ember generate model monster
 
-
-
+3.
