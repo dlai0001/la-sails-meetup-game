@@ -12,7 +12,7 @@
     "ember-load-initializers": "stefanpenner/ember-load-initializers#0.0.2",
     "ember-qunit-notifications": "^0.0.3",
     "ember-cli-test-loader": "rjackson/ember-cli-test-loader#0.0.2",
-    "ember-data-sails-adapter": "~2.0.0",
+    "ember-data-sails-adapter": "git@github.com:dlai0001/ember-data-sails-adapter.git#master",
     "socket.io": "~1.0.6",
     "events": "~1.0.0"
   }

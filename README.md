@@ -130,6 +130,9 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
       ## ember MVC client to connect to our SailsJS backend.
       $> bower install ember-data-sails-adapter --save
 
+  (Note: in theory, when things are fixed that adapter should work.  I did a bit of hacking
+  to get real time updates working smoothly, https://github.com/dlai0001/ember-data-sails-adapter )
+
 
 12. Edit the `Brockfile.js` to include the Ember-Sails adapter.
 
