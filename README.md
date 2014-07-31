@@ -10,7 +10,8 @@ http://www.google.com/moderator/#15/e=21174e&t=21174e.40
 SailsJS Build A Game Series - Day1
 ----------------------------------
 
-Goal: Create a world with 10 monsters moving around.  When we open the page, we will see 10 monsters moving around the screen in sync with the server in near real time.
+__Goal:__ Create a virtual world with 10 monsters moving about.  When we open the page, 
+we will see multiple monsters moving around the screen in sync with the server in near real time.
 
 1. Setup for today's lesson.
 
