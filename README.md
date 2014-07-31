@@ -122,59 +122,77 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
 
 11. Install a few libraries we'll be using.
 
-		## Promises makes JavaScript code with nested
-		## callbacks a lot easier to work with.
-		$> npm install promised-io --save
+      ## Promises makes JavaScript code with nested
+      ## callbacks a lot easier to work with.
+      $> npm install promised-io --save
 
-		## We'll also be installing an ember-sails-adapter to allow our
-		## ember MVC client to connect to our SailsJS backend.
-		$> bower install ember-data-sails-adapter --save
+      ## We'll also be installing an ember-sails-adapter to allow our
+      ## ember MVC client to connect to our SailsJS backend.
+      $> bower install ember-data-sails-adapter --save
 
 
 12. Edit the `Brockfile.js` to include the Ember-Sails adapter.
 
-      ...
-      // Include Ember Data Sails Adapter import statement before the `app.toTree()`
-      app.import('vendor/ember-data-sails-adapter/ember-data-sails-adapter.js');
-      ...
-      module.exports = app.toTree();
+        ...
+        // Include Ember Data Sails Adapter import statement before the `app.toTree()`
+        app.import('vendor/ember-data-sails-adapter/ember-data-sails-adapter.js');
+        ...
+        module.exports = app.toTree();
 
 
 13. Generate / Add the ember-sails `application` adapter to the ember app.
 
-      $> ember generate adapter application
+        $> ember generate adapter application
 
-  Change `/app/adapters/application.js` to use the SailsSocketAdapter.
+    Change `/app/adapters/application.js` to use the SailsSocketAdapter.
 
-      import DS from 'ember-data';
+        import DS from 'ember-data';
 
-      export default DS.SailsSocketAdapter.extend({
+        export default DS.SailsSocketAdapter.extend({
 
-      });
+        });
 
 
 
 14. Genrate / Add a `serializer` for the ember app.
 
-      $> ember generate serializer application
+        $> ember generate serializer application
 
-  Change `/app/serializers/application.js` to use explicitly use the JSON serializer.
+  Change `/app/serializers/application.js` to use explicitly use the JSON serializer
+  with some overrides to handle the differences between SailsJS and what Ember
+  expects.
 
-      import DS from 'ember-data';
+        import DS from 'ember-data';
+        import Ember from 'ember';
 
-      export default = DS.JSONSerializer.extend({
+        export default DS.JSONSerializer.extend({
 
-        extractArray: function(store, type, arrayPayload) {
-          var serializer = this;
-          return Ember.ArrayPolyfills.map.call(arrayPayload, function(singlePayload) {
-            return serializer.extractSingle(store, type, singlePayload);
-          });
-        },
+          extractArray: function(store, type, arrayPayload) {
+            var serializer = this;
+            return Ember.ArrayPolyfills.map.call(arrayPayload, function(singlePayload) {
+              return serializer.extractSingle(store, type, singlePayload);
+            });
+          },
 
-        serializeIntoHash: function(hash, type, record, options) {
-          Ember.merge(hash, this.serialize(record, options));
-        }
-      });
+          serializeIntoHash: function(hash, type, record, options) {
+            Ember.merge(hash, this.serialize(record, options));
+          }
+
+        });
+
+
+15. Use bower to install socket.io (the ember-data-sails-adapter does not appear to
+be including this dependency correctly.)
+
+
+        $> bower install socket.io --save
+
+  Add in your `Brocfile.js` the import.
+
+        ...
+        // Include Socket.IO dependency needed by Sails Adapter
+        app.import('vendor/socket.io/lib/socket.js');
+        ...
 
 
 
@@ -186,18 +204,70 @@ Goal: Create a world with 10 monsters moving around.  When we open the page, we 
 To git checkout "lessons/day1"
 
 
-1. Generate a sails model and controller to represent our monster.
+1. First we want to create a backend representation of the data
+representing our monsters. Generate a sails model and controller to
+represent our monster.
 
-		$> sails generate model monster
-		$> sails generate controller monster
+		    $> sails generate model monster
+		    $> sails generate controller monster
 
-  Add x,y property to our monster model.
+  Add an id, x, and y property to our monster model, `/api/models/Monster.js`
+
+        module.exports = {
+
+          attributes: {
+            id: {
+              type: 'integer',
+              autoIncrement: true,
+              primaryKey: true,
+              unique: true
+            },
+            xPosition: {
+              type: 'INTEGER',
+              max: 1280,
+              required: true
+            },
+            yPosition: {
+              type: 'INTEGER',
+              max: 720,
+              required: true
+            }
+          }
+        };
+
+  At this point, you should have your basic CRUD routes.
 
 
+2. Generate the client side model for monster.  We will use this to work with
+the same data on the client side that we have on the server side.  This is
+because we're using 2 MVC frameworks, MVC on the server side serving up the
+API, and MVC again on the client side.
+
+        $> ember generate model monster
+
+  Add the same properties to the client side model, `/app/models/monster.js`
+
+        import DS from 'ember-data';
+
+        export default DS.Model.extend({
+          xPosition: DS.attr('number'),
+          yPosition: DS.attr('number')
+        });
 
 
-2. Generate the ember model for monster.
+3. Generate a route on the client side to wire up the client side model with the
+request.
 
-    $> ember generate model monster
+        $> ember generate route index
 
-3.
+  In the `/app/routes/index.js`, wire up the model hook to fetch our monster
+  models.
+
+        import Ember from 'ember';
+
+        export default Ember.Route.extend({
+        	model: function() {
+            return this.store.find('monster');
+        	}
+        });
+
