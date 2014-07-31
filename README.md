@@ -350,5 +350,44 @@ coordinates in the model.
         $> ember generate controller monster
 
   In the index controller, make it a `Ember.ArrayController`, and set the item
-  controller to our monster controller.
+  controller to our monster controller.  This let's us specify the sub controller
+  to use to handles computing our monster style properties.
+
+        import Ember from 'ember';
+
+
+        export default Ember.ArrayController.extend({
+          itemController: 'monster'
+        });
+
+  In the `app/controllers/monster.js` controller, create a computed property that
+  observes changes in the X & Y coordinates.  This will create a computed property
+  that our template can bind to and get the styling to set it's top and left
+  properties.
+
+        import Ember from 'ember';
+
+        export default Ember.ObjectController.extend({
+          computedStyle: function() {
+            var model = this.get('model');
+
+            return "position: absolute; " +
+                'top: ' + model.get('xPosition') + 'px;' +
+                "left:" + model.get('yPosition') + "px;";
+          }.property('model.xPosition', 'model.yPosition')
+        });
+
+
+  In the index template, let's add an image to represent our monster, and bind it to
+  those coordinates.
+
+
+        <div style="width: 1280px; height: 760px;">
+          {{#each}}
+
+              <img src="/images/ghost-128.png" {{bind-attr style=computedStyle}} />
+
+          {{/each}}
+        </div>
+
 
