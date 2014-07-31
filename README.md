@@ -3,6 +3,9 @@ So Cal Node Meetup - Build a SailsJS Adventure Game series
 
 In this series, we will be building a simple web game from scratch.  Each meetup we will take a new feature, and implement it in the meetup for you to follow.  Bring your laptops and be sure to check out the code branch for that day before the start of the meetup.
 
+Suggest / Vote for which feature we implement at the next meetup.
+http://www.google.com/moderator/#15/e=21174e&t=21174e.40
+
 
 Prelude, how this project skeleton was setup
 ---------------------------------------------
@@ -269,17 +272,38 @@ SailsJS Build A Game Series - Day1
 
 Goal: Create a world with 10 monsters moving around.  When we open the page, we will see 10 monsters moving around the screen in sync with the server in near real time.
 
-To git checkout "lessons/day1"
+1. Setup for today's lesson.
+
+  Make sure you have Bower, SailsJS, and EmberJS command line tools installed.
+
+		$> sudo npm install -g bower
+		$> sudo npm install -g sails
+		$> sudo npm install -g ember-cli
 
 
-1. First we want to create a backend representation of the data
-representing our monsters. Generate a sails model and controller to
-represent our monster.
+  Fetch the source for today's lesson.  For today, we'll be starting off with a pretty bare project skeleton
+  with SailsJS v0.10 beta, EmberJS 1.6, and an SailsSocketAdapter.  (see Prelude for full details of the setup)
+  
+		    $> git clone git@github.com:dlai0001/la-sails-meetup-game.git
+		    $> git fetch
+		    $> git checkout "lessons/day1"
+
+
+  Run npm and bower install to download dependencies.  This will download all the dependencies specified in 
+  the `package.json` and `bower.json`.
+
+		    $> npm install
+		    $> bower install
+
+
+2. First we want to create a backend representation of the data representing our monsters. 
+Generate a sails model and controller to represent our monster.
 
 		    $> sails generate model monster
 		    $> sails generate controller monster
 
-  Add an id, x, and y property to our monster model, `/api/models/Monster.js`
+  Add an id, xPosition, and yPosition property to our monster model, `/api/models/Monster.js`.
+  We'll be using this to track the position on the screen of the monsters in our virtual world.
 
         module.exports = {
 
@@ -303,7 +327,8 @@ represent our monster.
           }
         };
 
-  At this point, you should have your basic CRUD routes.
+  At this point, you should have your basic CRUD routes and Pub/Sub counter parts provided 
+  by the SailsJS blueprints.
 
 
 2. Generate the client side model for monster.  We will use this to work with
@@ -313,7 +338,8 @@ API, and MVC again on the client side.
 
         $> ember generate model monster
 
-  Add the same properties to the client side model, `/app/models/monster.js`
+  Add the same properties to the client side model, `/app/models/monster.js`.  (Note: we 
+  omit the `id` property because ember data automatically tracks this.)
 
         import DS from 'ember-data';
 
@@ -335,9 +361,12 @@ request.
 
         export default Ember.Route.extend({
         	model: function() {
-            return this.store.find('monster');
+                     return this.store.find('monster');
         	}
         });
+
+  Routes in the Ember client side framework is the backbone that wires up the various pieces 
+  of this MVC framework on the client side.
 
 
 4. We will now work on displaying our monster in our client side app at the
@@ -391,3 +420,14 @@ coordinates in the model.
         </div>
 
 
+  At this point, you'll have a client side app that can display images of a monster at 
+  the coordinates corresponding with the model.  Also notice, when you use the POST, PUT, 
+  and DELETE of your sails app, `http://localhost:1337/monster`.  You will see the 
+  monster images on the screen update in real time.
+
+
+
+
+
+
+  
