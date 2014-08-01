@@ -114,13 +114,13 @@ Because we're short on time, we'll skip over a lot of some of the beginning boil
 
 11. Install a few libraries we'll be using.
 
-      ## Promises makes JavaScript code with nested
-      ## callbacks a lot easier to work with.
-      $> npm install promised-io --save
+      	## Promises makes JavaScript code with nested
+      	## callbacks a lot easier to work with.
+      	$> npm install promised-io --save
 
-      ## We'll also be installing an ember-sails-adapter to allow our
-      ## ember MVC client to connect to our SailsJS backend.
-      $> bower install ember-data-sails-adapter --save
+      	## We'll also be installing an ember-sails-adapter to allow our
+      	## ember MVC client to connect to our SailsJS backend.
+      	$> bower install ember-data-sails-adapter --save
 
   (Note: in theory, when things are fixed that adapter should work.  I did a bit of hacking
   to get real time updates working smoothly, https://github.com/dlai0001/ember-data-sails-adapter )
