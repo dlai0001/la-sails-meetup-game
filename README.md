@@ -1,5 +1,5 @@
 So Cal Node Meetup - Build a SailsJS Adventure Game series
-====================
+==========================================================
 
 In this series, we will be building a simple web game from scratch.  Each meetup we will take a new feature, and implement it in the meetup for you to follow.  Bring your laptops and be sure to check out the code branch for that day before the start of the meetup.
 
@@ -27,7 +27,9 @@ we will see multiple monsters moving around the screen in sync with the server i
   
 		    $> git clone git@github.com:dlai0001/la-sails-meetup-game.git
 		    $> git fetch
-		    $> git checkout "lessons/day1"
+		    $> git checkout "lesson/1"
+
+  (Note: you can also find the completed exercise under "lesson/1.completed")
 
 
   Run npm and bower install to download dependencies.  This will download all the dependencies specified in 
