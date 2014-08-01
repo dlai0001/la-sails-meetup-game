@@ -62,11 +62,16 @@ Generate a sails model and controller to represent our monster.
             },
             yPosition: {
               type: 'INTEGER',
-              max: 720,
+              max: 760,
               required: true
+            },
+            //direction monster is facing in radians
+            direction: {
+              type: 'FLOAT'
             }
           }
         };
+
 
   At this point, you should have your basic CRUD routes and Pub/Sub counter parts provided 
   by the SailsJS blueprints.
@@ -110,7 +115,27 @@ request.
   of this MVC framework on the client side.
 
 
-4. We will now work on displaying our monster in our client side app at the
+4. In order to display our monsters, let's create a template that displays an image tag for each monster.
+
+        $> ember generate template index
+
+  In the `/app/templates/index.hbs` template, let's add an image to represent our monster, and bind it to
+  those coordinates.
+
+
+        <div style="width: 1280px; height: 760px;">
+          {{#each}}
+
+              <img src="/images/ghost-128.png" {{bind-attr style=computedStyle}} />
+
+          {{/each}}
+        </div>
+
+  (Note: the computedStyle bind here will do nothing until we implement that in the controller
+  in the next step)
+
+
+5. We will now work on displaying our monster in our client side app at the
 coordinates in the model.
 
   Start first by generating a controller for our monster and an array controller
@@ -148,27 +173,62 @@ coordinates in the model.
         });
 
 
-  In the index template, let's add an image to represent our monster, and bind it to
-  those coordinates.
-
-
-        <div style="width: 1280px; height: 760px;">
-          {{#each}}
-
-              <img src="/images/ghost-128.png" {{bind-attr style=computedStyle}} />
-
-          {{/each}}
-        </div>
-
-
   At this point, you'll have a client side app that can display images of a monster at 
   the coordinates corresponding with the model.  Also notice, when you use the POST, PUT, 
   and DELETE of your sails app, `http://localhost:1337/monster`.  You will see the 
   monster images on the screen update in real time.
 
 
+6. Now we will create a service to handle the monster's movements.
 
+  Create a file `/api/services/MonsterAiService.js`, then let's add some logic to handle
+  the monster's movements.
 
+          exports.updateMonster = function() {
 
+            //Find all our monsters
+            Monster.find().exec(function(err, monsters){
+              monsters.forEach(function(monster) {
 
-  
+                //assign a direction if none is there.
+                if(!monster.direction)
+                  monster.direction = Math.random() * 2 * Math.PI;
+
+                //move them randomly by and x,y offset.
+                var distance = 5;
+                var xOffset = Math.floor(Math.cos(monster.direction) * distance);
+                var yOffset = Math.floor(Math.sin(monster.direction) * distance);
+
+                //if offset puts the monster off the screen change directions.
+                if (monster.xPosition + xOffset < 0 || monster.xPosition + xOffset > 1280 ||
+                  monster.yPosition + yOffset < 0 || monster.yPosition + yOffset > 760 ) {
+
+                  monster.direction = Math.random() * 2 * Math.PI;
+
+                } else {
+                  monster.xPosition += xOffset;
+                  monster.yPosition += yOffset;
+                }
+
+                monster.save(function(err, monsterModel) {
+                  //Publish the update so any subscriber will be alerted.
+                  if(!err)
+                    Monster.publishUpdate(monsterModel.id, monsterModel);
+                  else
+                    console.log(err);
+                });
+              });
+            });
+          };
+
+  In `/config/bootstrap.js`, let's add some logic to schedule this monster update task
+  to run periodically on scheduled intervals.
+
+            //Setting a timer to schedule a monster update Service
+            console.log("starting MonsterAiService");
+            setInterval(function() {
+              MonsterAiService.updateMonster();
+            }, 300);
+
+  At this point, you'll have monsters floating around the screen.  And if you open multiple browsers,
+  you'll see they are all in sync.

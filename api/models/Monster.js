@@ -21,8 +21,12 @@ module.exports = {
     },
     yPosition: {
       type: 'INTEGER',
-      max: 720,
+      max: 760,
       required: true
+    },
+    //direction monster is facing in radians
+    direction: {
+      type: 'FLOAT'
     }
   }
 };
