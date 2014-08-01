@@ -224,7 +224,9 @@ coordinates in the model.
           };
 
   In `/config/bootstrap.js`, let's add some logic to schedule this monster update task
-  to run periodically on scheduled intervals.
+  to run periodically on scheduled intervals.  `bootstrap.js` is a special config file 
+  that runs at the start of a SailsJS app starting up.  It's a good place to put any 
+  calls to initialization and task scheduling items.
 
             //Setting a timer to schedule a monster update Service
             console.log("starting MonsterAiService");
