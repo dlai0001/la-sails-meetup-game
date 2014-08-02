@@ -2,7 +2,6 @@
  * Created by dlai on 7/31/14.
  */
 
-
 exports.updateMonster = function() {
 
   //Find all our monsters
@@ -20,7 +19,7 @@ exports.updateMonster = function() {
 
       //if offset puts the monster off the screen change directions.
       if (monster.xPosition + xOffset < 0 || monster.xPosition + xOffset > 1280 ||
-        monster.yPosition + yOffset < 0 || monster.yPosition + yOffset > 760 ) {
+          monster.yPosition + yOffset < 0 || monster.yPosition + yOffset > 760 ) {
 
         monster.direction = Math.random() * 2 * Math.PI;
 
@@ -38,4 +37,10 @@ exports.updateMonster = function() {
       });
     });
   });
+
+  // schedule the next update
+  setImmediate(function() {
+    this.updateMonster();
+  }.bind(this));
+
 };

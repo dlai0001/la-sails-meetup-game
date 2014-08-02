@@ -169,8 +169,8 @@ coordinates in the model.
             var model = this.get('model');
 
             return "position: absolute; " +
-                'top: ' + model.get('xPosition') + 'px;' +
-                "left:" + model.get('yPosition') + "px;";
+                'top: ' + model.get('yPosition') + 'px;' +
+                "left:" + model.get('xPosition') + "px;";
           }.property('model.xPosition', 'model.yPosition')
         });
 
@@ -186,7 +186,7 @@ coordinates in the model.
   Create a file `/api/services/MonsterAiService.js`, then let's add some logic to handle
   the monster's movements.
 
-          exports.updateMonster = function() {
+        exports.updateMonster = function() {
 
             //Find all our monsters
             Monster.find().exec(function(err, monsters){
@@ -221,16 +221,19 @@ coordinates in the model.
                 });
               });
             });
+
+            // schedule the next update
+            setImmediate(function() {
+              this.updateMonster();
+            }.bind(this));
+
           };
 
   In `/config/bootstrap.js`, let's add some logic to schedule this monster update task
   to run periodically on scheduled intervals.
 
-            //Setting a timer to schedule a monster update Service
-            console.log("starting MonsterAiService");
-            setInterval(function() {
-              MonsterAiService.updateMonster();
-            }, 300);
+            //Add update monster call before cb()
+            MonsterAiService.updateMonster();
 
   At this point, you'll have monsters floating around the screen.  And if you open multiple browsers,
   you'll see they are all in sync.

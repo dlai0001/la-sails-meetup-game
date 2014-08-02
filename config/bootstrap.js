@@ -13,11 +13,8 @@ module.exports.bootstrap = function (cb) {
   // It's very important to trigger this callack method when you are finished 
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
-  //Setting a timer to schedule a monster update Service
-  console.log("starting MonsterAiService");
-  setInterval(function() {
-    MonsterAiService.updateMonster();
-  }, 300);
+  //Add update monster call before cb()
+  MonsterAiService.updateMonster();
 
   cb();
 };
