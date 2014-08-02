@@ -49,6 +49,7 @@ config/local.js
 # compiled output
 /dist
 /tmp
+/www
 
 # dependencies
 /node_modules
