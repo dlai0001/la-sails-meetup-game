@@ -229,7 +229,9 @@ coordinates in the model.
 
           };
 
-  In `/config/bootstrap.js`, let's start up the service we just created.
+  In `/config/bootstrap.js`, let's start our service.  `bootstrap.js` is a special config file 
+  that runs at the start of a SailsJS app starting up.  It's a good place to put any 
+  calls to initialization and task scheduling items.
 
             //Add update monster call before cb()
             MonsterAiService.updateMonster();
