@@ -229,8 +229,7 @@ coordinates in the model.
 
           };
 
-  In `/config/bootstrap.js`, let's add some logic to schedule this monster update task
-  to run periodically on scheduled intervals.
+  In `/config/bootstrap.js`, let's start up the service we just created.
 
             //Add update monster call before cb()
             MonsterAiService.updateMonster();
