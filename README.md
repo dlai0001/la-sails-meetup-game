@@ -188,53 +188,57 @@ coordinates in the model.
   Create a file `/api/services/MonsterAiService.js`, then let's add some logic to handle
   the monster's movements.
 
-          exports.updateMonster = function() {
-
-            //Find all our monsters
-            Monster.find().exec(function(err, monsters){
-              monsters.forEach(function(monster) {
-
-                //assign a direction if none is there.
-                if(!monster.direction)
-                  monster.direction = Math.random() * 2 * Math.PI;
-
-                //move them randomly by and x,y offset.
-                var distance = 5;
-                var xOffset = Math.floor(Math.cos(monster.direction) * distance);
-                var yOffset = Math.floor(Math.sin(monster.direction) * distance);
-
-                //if offset puts the monster off the screen change directions.
-                if (monster.xPosition + xOffset < 0 || monster.xPosition + xOffset > 1280 ||
-                  monster.yPosition + yOffset < 0 || monster.yPosition + yOffset > 760 ) {
-
-                  monster.direction = Math.random() * 2 * Math.PI;
-
-                } else {
-                  monster.xPosition += xOffset;
-                  monster.yPosition += yOffset;
-                }
-
-                monster.save(function(err, monsterModel) {
-                  //Publish the update so any subscriber will be alerted.
-                  if(!err)
-                    Monster.publishUpdate(monsterModel.id, monsterModel);
-                  else
-                    console.log(err);
-                });
-              });
-            });
-          };
+          
+		exports.updateMonster = function() {
+		
+		  //Find all our monsters
+		  Monster.find().exec(function(err, monsters){
+		    monsters.forEach(function(monster) {
+		
+		      //assign a direction if none is there.
+		      if(!monster.direction)
+		        monster.direction = Math.random() * 2 * Math.PI;
+		
+		      //move them randomly by and x,y offset.
+		      var distance = 5;
+		      var xOffset = Math.floor(Math.cos(monster.direction) * distance);
+		      var yOffset = Math.floor(Math.sin(monster.direction) * distance);
+		
+		      //if offset puts the monster off the screen change directions.
+		      if (monster.xPosition + xOffset < 0 || monster.xPosition + xOffset > 1280 ||
+		        monster.yPosition + yOffset < 0 || monster.yPosition + yOffset > 760 ) {
+		
+		        monster.direction = Math.random() * 2 * Math.PI;
+		
+		      } else {
+		        monster.xPosition += xOffset;
+		        monster.yPosition += yOffset;
+		      }
+		
+		      monster.save(function(err, monsterModel) {
+		        //Publish the update so any subscriber will be alerted.
+		        if(!err)
+		          Monster.publishUpdate(monsterModel.id, monsterModel);
+		        else
+		          console.log(err);
+		      });
+		    });
+		  });
+		
+		  // schedule the next update
+		  setImmediate(function() {
+		    this.updateMonster();
+		  }.bind(this));
+		
+		};
 
   In `/config/bootstrap.js`, let's add some logic to schedule this monster update task
   to run periodically on scheduled intervals.  `bootstrap.js` is a special config file 
   that runs at the start of a SailsJS app starting up.  It's a good place to put any 
   calls to initialization and task scheduling items.
 
-            //Setting a timer to schedule a monster update Service
-            console.log("starting MonsterAiService");
-            setInterval(function() {
-              MonsterAiService.updateMonster();
-            }, 300);
+            //Add update monster call before cb()
+            MonsterAiService.updateMonster();
 
   At this point, you'll have monsters floating around the screen.  And if you open multiple browsers,
   you'll see they are all in sync.
