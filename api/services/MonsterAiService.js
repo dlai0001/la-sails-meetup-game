@@ -3,7 +3,7 @@
  */
 
 
-exports.updateMonster = function() {
+exports.doUpdateMonsters = function() {
 
   //Find all our monsters
   Monster.find().exec(function(err, monsters){
@@ -38,4 +38,10 @@ exports.updateMonster = function() {
       });
     });
   });
+
+  // schedule the next update
+  setImmediate(function() {
+    this.doUpdateMonsters();
+  }.bind(this));
+
 };

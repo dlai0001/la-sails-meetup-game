@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "description": "a Sails application",
   "dependencies": {
+    "box2d": "^1.0.0",
     "ejs": "0.8.4",
     "events": "^1.0.1",
     "grunt": "0.4.1",
