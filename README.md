@@ -38,6 +38,8 @@ we will see multiple monsters moving around the screen in sync with the server i
 		    $> npm install
 		    $> bower install
 
+  You can build this project using `grunt build` command, and launch the server using `sails lift`. 
+
 
 2. First we want to create a backend representation of the data representing our monsters. 
 Generate a sails model and controller to represent our monster.
