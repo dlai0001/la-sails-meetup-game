@@ -169,8 +169,8 @@ coordinates in the model.
             var model = this.get('model');
 
             return "position: absolute; " +
-                'top: ' + model.get('xPosition') + 'px;' +
-                "left:" + model.get('yPosition') + "px;";
+                'top: ' + model.get('yPosition') + 'px;' +
+                "left:" + model.get('xPosition') + "px;";
           }.property('model.xPosition', 'model.yPosition')
         });
 
