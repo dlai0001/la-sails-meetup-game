@@ -16,17 +16,16 @@ module.exports = {
     },
     xPosition: {
       type: 'INTEGER',
-      max: 1280,
-      required: true
+      defaultsTo:640
     },
     yPosition: {
       type: 'INTEGER',
-      max: 760,
-      required: true
+      defaultsTo:310
     },
     //direction monster is facing in radians
     direction: {
-      type: 'FLOAT'
+      type: 'FLOAT',
+      defaultsTo:0
     }
   }
 };

@@ -3,45 +3,32 @@
  */
 
 
-exports.doUpdateMonsters = function() {
+module.exports = {
+  init: function() {
+    //Register all monsters to physics service
+    console.log("Registering monsters to physics service");
 
-  //Find all our monsters
-  Monster.find().exec(function(err, monsters){
-    monsters.forEach(function(monster) {
-
-      //assign a direction if none is there.
-      if(!monster.direction)
-        monster.direction = Math.random() * 2 * Math.PI;
-
-      //move them randomly by and x,y offset.
-      var distance = 5;
-      var xOffset = Math.floor(Math.cos(monster.direction) * distance);
-      var yOffset = Math.floor(Math.sin(monster.direction) * distance);
-
-      //if offset puts the monster off the screen change directions.
-      if (monster.xPosition + xOffset < 0 || monster.xPosition + xOffset > 1280 ||
-        monster.yPosition + yOffset < 0 || monster.yPosition + yOffset > 760 ) {
-
-        monster.direction = Math.random() * 2 * Math.PI;
-
-      } else {
-        monster.xPosition += xOffset;
-        monster.yPosition += yOffset;
-      }
-
-      monster.save(function(err, monsterModel) {
-        //Publish the update so any subscriber will be alerted.
-        if(!err)
-          Monster.publishUpdate(monsterModel.id, monsterModel);
-        else
-          console.log(err);
+    Monster.find().exec(function(err, monsters) {
+      monsters.forEach(function(monster) {
+        PhysicsService.registerMonster(monster);
       });
     });
-  });
 
-  // schedule the next update
-  setImmediate(function() {
-    this.doUpdateMonsters();
-  }.bind(this));
+  },
 
+
+
+  handleCollision: function(monsterModel) {
+    // Monster will randomly change angles when collided.
+    console.log("handling monster stall or collision, changing directions");
+    monsterModel.direction = Math.random() * 2 * Math.PI;
+    monsterModel.save(function (err, savedMonsterModel) {
+      //Publish the update so any subscriber will be alerted.
+      if (!err)
+        Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
+      else
+        console.log(err);
+
+    });
+  }
 };

@@ -11,8 +11,7 @@ http://www.google.com/moderator/#15/e=21174e&t=21174e.40
 SailsJS Build A Game Series - Day2
 ----------------------------------
 
-__Goal:__ Create a virtual world with 10 monsters moving about.  When we open the page,
-we will see multiple monsters moving around the screen in sync with the server in near real time.
+__Goal:__ Incorporate physics into our game to handle collisions between monsters.
 
 
 1. Setup for today's lesson, we'll be continuing off our lesson from
@@ -39,9 +38,13 @@ we will see multiple monsters moving around the screen in sync with the server i
         $> bower install
 
 
-2. To handle the physics, let's install `box2d`, a popular 2d physics engine.
+2. To handle the physics, we'll be using Box2D for Node. This is a 2d physics engine that will
+handle collisions between moving bodies.
 
         $> npm install box2d
 
 
-3. Create a service `/api/services/CharacterPhysicsService.js`
+3. Create a service `/api/services/PhysicsService.js` file, where we'll be writing various methods
+ to handle registering our objects (monsters), and calling a periodic task to compute the next
+ position of all the objects in our virtual world.
+

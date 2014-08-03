@@ -18,7 +18,7 @@ module.exports.bootstrap = function (cb) {
 
 
   //start updating monsters
-  MonsterAiService.doUpdateMonsters();
+  MonsterAiService.init();
 
   cb();
 };
