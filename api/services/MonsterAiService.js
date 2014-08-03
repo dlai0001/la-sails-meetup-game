@@ -13,14 +13,13 @@ module.exports = {
         PhysicsService.registerMonster(monster);
       });
     });
-
   },
 
 
 
-  handleCollision: function(monsterModel) {
+  handleStuckMonster: function(monsterModel) {
     // Monster will randomly change angles when collided.
-    console.log("handling monster stall or collision, changing directions");
+    // console.log("handling monster stall or collision, changing directions");
     monsterModel.direction = Math.random() * 2 * Math.PI;
     monsterModel.save(function (err, savedMonsterModel) {
       //Publish the update so any subscriber will be alerted.

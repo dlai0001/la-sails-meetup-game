@@ -5,7 +5,7 @@
 var b2d = require("box2d");
 var SCALE = 30;
 
-var DEFAULT_MONSTER_FORCE = 20.0;
+var DEFAULT_MONSTER_FORCE = 100.0;
 
 module.exports = {
 
@@ -13,9 +13,7 @@ module.exports = {
   _lastUpdate:null,
 
   // we'll use this as a dictionary to
-  _registeredObjects: {
-
-  },
+  _registeredObjects: {},
 
 
   init: function() {
@@ -48,44 +46,39 @@ module.exports = {
     var world = new b2d.b2World(worldAABB, gravity, doSleep);
 
     this._world = world;
+    this._createBoundingBox();
+  },
 
+  _createBoundingBox: function() {
     // create a bounding box
     var groundBodyDef = new b2d.b2BodyDef();
     groundBodyDef.position.Set(0.0, -12.0);
-    var groundBody = world.CreateBody(groundBodyDef);
+    var groundBody = this._world.CreateBody(groundBodyDef);
     var groundShapeDef = new b2d.b2PolygonDef();
     groundShapeDef.SetAsBox(30.0, 2.0);
     groundBody.CreateShape(groundShapeDef);
 
     var ceilingBodyDef = new b2d.b2BodyDef();
     ceilingBodyDef.position.Set(0.0, 12.0);
-    var ceilingBody = world.CreateBody(ceilingBodyDef);
+    var ceilingBody = this._world.CreateBody(ceilingBodyDef);
     var ceilingShapeDef = new b2d.b2PolygonDef();
     ceilingShapeDef.SetAsBox(30.0, 2.0);
     ceilingBody.CreateShape(ceilingShapeDef);
 
     var leftWallBodyDef = new b2d.b2BodyDef();
     leftWallBodyDef.position.Set(-21.33, 0.0);
-    var leftWallBody = world.CreateBody(leftWallBodyDef);
+    var leftWallBody = this._world.CreateBody(leftWallBodyDef);
     var leftWallShapeDef = new b2d.b2PolygonDef();
     leftWallShapeDef.SetAsBox(2.0, 20.0);
     leftWallBody.CreateShape(leftWallShapeDef);
 
     var rightWallBodyDef = new b2d.b2BodyDef();
     rightWallBodyDef.position.Set(21.33, 0.0);
-    var rightWallBody = world.CreateBody(rightWallBodyDef);
+    var rightWallBody = this._world.CreateBody(rightWallBodyDef);
     var rightWallShapeDef = new b2d.b2PolygonDef();
     rightWallShapeDef.SetAsBox(2.0, 20.0);
     rightWallBody.CreateShape(rightWallShapeDef);
-
-    //set a contact listener to handle the collisons in the world.
-    var contactListener = new b2d.b2ContactListener();
-    contactListener.EndContact = function(contact) {
-      console.log("contact", contact);
-
-    };
   },
-
 
 
   doUpdateTask: function() {
@@ -94,10 +87,10 @@ module.exports = {
     this._lastUpdate = newTime;
 
     // do a step in the world.
-    console.log("update task stepping world", timeDiff);
+    //console.log("update task stepping world", timeDiff);
     //console.log("current mosnters", this._registeredObjects);
 
-    this._world.Step(timeDiff, 1);
+    this._world.Step(timeDiff, 5);
 
     for(var key in this._registeredObjects) {
       (function(body) {
@@ -106,7 +99,7 @@ module.exports = {
 
         // if the monster is standing still, handle the stall
         if(position.x == body.model.xPosition && position.y == body.model.yPosition)
-          MonsterAiService.handleCollision(body.model);
+          MonsterAiService.handleStuckMonster(body.model);
 
         // Apply force at the monster's given angle for all monsters registered in the world.
         //console.log("update task applying force to ", body.model);
@@ -167,11 +160,6 @@ module.exports = {
   unregisterMonster: function(monsterModel) {
     this._world.DestroyBody(this._registeredObjects[monsterModel.id]);
     delete this._registeredObjects[monsterModel.id];
-  },
-
-
-  handleCollision: function() {
-
   }
 
 }
