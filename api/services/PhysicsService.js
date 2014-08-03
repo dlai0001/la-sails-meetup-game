@@ -2,17 +2,20 @@
  * Created by dlai on 8/1/14.
  */
 
-var b2d = require("box2d");
-var SCALE = 30;
 
-var DEFAULT_MONSTER_FORCE = 100.0;
+var b2d = require("box2d"); //import box2d physics library.
+
+var SCALE = 30; // pixels to meters scale
+
+var DEFAULT_MONSTER_FORCE = 100.0; // force applied to our monsters.
 
 module.exports = {
 
-  _world: null, // our world
-  _lastUpdate:null,
+  _world: null,         // Reference to our instance of the world.
 
-  // we'll use this as a dictionary to
+  _lastUpdate:null,     // Tracks last processed timestamp for calculating next step size.
+
+  // A dictionary to track/index all the objects we have in our world.
   _registeredObjects: {},
 
 
@@ -50,6 +53,8 @@ module.exports = {
   },
 
   _createBoundingBox: function() {
+    console.log("creating bounding box for the world.")
+
     // create a bounding box
     var groundCeilingShapeDef = new b2d.b2PolygonDef();
     groundCeilingShapeDef.SetAsBox(30.0, 2.0);
