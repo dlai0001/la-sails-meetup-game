@@ -17,7 +17,7 @@ module.exports = {
 
   handleCreatedMonster: function(newRecord) {
     console.log("monster ai service handling created monster", newRecord);
-    Monster.findOne({id:newRecord.id}).exec(function(err, model){
+    Monster.findOne(newRecord.id).exec(function(err, model){
       if(!err) {
         PhysicsService.registerMonster(model);
       }  else {
