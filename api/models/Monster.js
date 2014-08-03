@@ -28,6 +28,19 @@ module.exports = {
       defaultsTo:0
     }
 
+  },
+
+  afterCreate: function(newlyInsertedRecord, cb){
+    MonsterAiService.handleCreatedMonster(newlyInsertedRecord);
+    cb();
+  },
+
+  afterDestroy: function(destroyedModels, cb) {
+    destroyedModels.forEach(function(destroyedModel){
+      MonsterAiService.handleDeletedMonster(destroyedModel);
+    });
+    cb();
   }
+
 };
 

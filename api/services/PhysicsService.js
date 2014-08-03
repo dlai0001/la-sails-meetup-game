@@ -35,7 +35,7 @@ module.exports = {
     console.log("creating virtual world");
     this._lastUpdate = Date.now();
 
-    //Size up the world
+    //Configure the world's size
     var worldAABB = new b2d.b2AABB();
     worldAABB.lowerBound.Set(-35.0, -25.0);
     worldAABB.upperBound.Set(35.0, 25);
@@ -51,33 +51,31 @@ module.exports = {
 
   _createBoundingBox: function() {
     // create a bounding box
+    var groundCeilingShapeDef = new b2d.b2PolygonDef();
+    groundCeilingShapeDef.SetAsBox(30.0, 2.0);
+
     var groundBodyDef = new b2d.b2BodyDef();
     groundBodyDef.position.Set(0.0, -12.0);
     var groundBody = this._world.CreateBody(groundBodyDef);
-    var groundShapeDef = new b2d.b2PolygonDef();
-    groundShapeDef.SetAsBox(30.0, 2.0);
-    groundBody.CreateShape(groundShapeDef);
+    groundBody.CreateShape(groundCeilingShapeDef);
 
     var ceilingBodyDef = new b2d.b2BodyDef();
     ceilingBodyDef.position.Set(0.0, 12.0);
     var ceilingBody = this._world.CreateBody(ceilingBodyDef);
-    var ceilingShapeDef = new b2d.b2PolygonDef();
-    ceilingShapeDef.SetAsBox(30.0, 2.0);
-    ceilingBody.CreateShape(ceilingShapeDef);
+    ceilingBody.CreateShape(groundCeilingShapeDef);
+
+    var wallShapeDef = new b2d.b2PolygonDef();
+    wallShapeDef.SetAsBox(2.0, 20.0);
 
     var leftWallBodyDef = new b2d.b2BodyDef();
     leftWallBodyDef.position.Set(-21.33, 0.0);
     var leftWallBody = this._world.CreateBody(leftWallBodyDef);
-    var leftWallShapeDef = new b2d.b2PolygonDef();
-    leftWallShapeDef.SetAsBox(2.0, 20.0);
-    leftWallBody.CreateShape(leftWallShapeDef);
+    leftWallBody.CreateShape(wallShapeDef);
 
     var rightWallBodyDef = new b2d.b2BodyDef();
     rightWallBodyDef.position.Set(21.33, 0.0);
     var rightWallBody = this._world.CreateBody(rightWallBodyDef);
-    var rightWallShapeDef = new b2d.b2PolygonDef();
-    rightWallShapeDef.SetAsBox(2.0, 20.0);
-    rightWallBody.CreateShape(rightWallShapeDef);
+    rightWallBody.CreateShape(wallShapeDef);
   },
 
 
@@ -96,36 +94,20 @@ module.exports = {
       (function(body) {
 
         var position = metersToPixel(body.GetPosition());
-
-        // if the monster is standing still, handle the stall
-        if(position.x == body.model.xPosition && position.y == body.model.yPosition)
-          MonsterAiService.handleStuckMonster(body.model);
+        MonsterAiService.handleMovementUpdate(body.model, position);
 
         // Apply force at the monster's given angle for all monsters registered in the world.
         //console.log("update task applying force to ", body.model);
         var angle = body.model.direction;
         var force = new b2d.b2Vec2(
-                Math.cos(angle) * DEFAULT_MONSTER_FORCE,
-                Math.sin(angle) * DEFAULT_MONSTER_FORCE
+            Math.cos(angle) * DEFAULT_MONSTER_FORCE,
+            Math.sin(angle) * DEFAULT_MONSTER_FORCE
         );
         body.ApplyForce(force, body.GetWorldCenter());
-
-        // update all our models with new coordinates.
-        body.model.xPosition = position.x;
-        body.model.yPosition = position.y;
-
-        //console.log("update task updating position of ", body.model);
-        body.model.save(function(err, savedMonsterModel) {
-          if(!err)
-            Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
-          else
-            console.log(err);
-        });
 
       })(this._registeredObjects[key]);
     }
 
-    // Update all the monsters' coordinates.
   },
 
   registerMonster: function(monsterModel) {
@@ -157,9 +139,9 @@ module.exports = {
     }
   },
 
-  unregisterMonster: function(monsterModel) {
-    this._world.DestroyBody(this._registeredObjects[monsterModel.id]);
-    delete this._registeredObjects[monsterModel.id];
+  unregisterMonster: function(monsterModelId) {
+    this._world.DestroyBody(this._registeredObjects[monsterModelId]);
+    delete this._registeredObjects[monsterModelId];
   }
 
 }

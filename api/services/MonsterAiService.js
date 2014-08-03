@@ -15,19 +15,47 @@ module.exports = {
     });
   },
 
+  handleCreatedMonster: function(newRecord) {
+    console.log("monster ai service handling created monster", newRecord);
+    Monster.findOne({id:newRecord.id}).exec(function(err, model){
+      if(!err) {
+        PhysicsService.registerMonster(model);
+      }  else {
+        console.log("error handling created monster", err);
+      }
+    });
 
+  },
 
-  handleStuckMonster: function(monsterModel) {
+  handleDeletedMonster: function(deletedRecord) {
+    console.log("monster ai service handling deleted monster", deletedRecord);
+    PhysicsService.unregisterMonster(deletedRecord.id);
+  },
+
+  handleMovementUpdate: function(monsterModel, position) {
     // Monster will randomly change angles when collided.
-    // console.log("handling monster stall or collision, changing directions");
-    monsterModel.direction = Math.random() * 2 * Math.PI;
+    // console.log("handling monster movement update", monsterModel, position);
+
+    // update all our models with new coordinates.
+    if (monsterModel.xPosition == position.x && monsterModel.yPosition == position.y) {
+      // moster hasn't moved, change directions
+      monsterModel.direction = Math.random() * 2 * Math.PI;
+    } else {
+      monsterModel.xPosition = position.x;
+      monsterModel.yPosition = position.y;
+    }
+
     monsterModel.save(function (err, savedMonsterModel) {
       //Publish the update so any subscriber will be alerted.
       if (!err)
-        Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
+        try {
+          Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
+        } catch(e) {
+          console.log("unable to publish update", e);
+        }
+
       else
         console.log(err);
-
     });
   }
 };
