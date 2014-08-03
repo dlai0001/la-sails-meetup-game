@@ -133,6 +133,15 @@ handle collisions between moving bodies in a 2 dimensional space.
 
           }
 
+  Add the call to the init methods in our `/configs/bootstrap.js`.
+
+          module.exports.bootstrap = function (cb) {
+
+            PhysicsService.init();
+            MonsterAiService.init();
+
+            cb();
+          };
 
 5. Let's start off by creating the world in which our Monsters live.  Since box2d uses meters
 instead of pixels.  We'll need to create a world that maps roughly slightly larger than our
@@ -154,9 +163,8 @@ our screen.
 
             initWorld: function() {
                 console.log("creating virtual world");
-                this._lastUpdate = Date.now();
 
-                //Configure the world's size
+                //Configure the world's size, to encapsulate slightly larger than our screen size.
                 var worldAABB = new b2d.b2AABB();
                 worldAABB.lowerBound.Set(-35.0, -25.0);
                 worldAABB.upperBound.Set(35.0, 25);
@@ -241,7 +249,9 @@ simulation world.
          // A dictionary to track/index all the objects we have in our world.
          _registeredObjects: {},
 
-  Then add a couple methods to add/remove Monsters
+  Then add a couple methods to add/remove Monsters.  In this method, write code to create a `box2d`
+  dynamic body to represent our Monster.  Also, to make things easier, we're going to shim in the
+  associated mondel so we can easily find which models correspond to which bodies.
 
          registerMonster: function(monsterModel) {
             //console.log("registering monster", monsterModel);
@@ -308,3 +318,94 @@ simulation world.
               PhysicsService.unregisterMonster(deletedRecord.id);
             },
 
+
+8. Now that we have Monsters represented as bodies (with shapes) in our virtual world.  We'll need
+to create an update loop task which will increment time in our virtual world and recalculate the
+coordinates of all the bodies in the world.
+
+  Add a method to our service to handle the update steps in `/api/services/PhysicsService.js`.
+  Then also add a loop call to this method in the init.  While we're iterating through `bodies`
+  in our virtual world.  We will also need to apply a force vector to enable our Monsters to
+  accelerate so they can move.
+
+          var DEFAULT_MONSTER_FORCE = 100.0; // force applied to our monsters.
+          ...
+
+          _lastUpdate:null,     // Tracks last processed timestamp for calculating next step size.
+
+          doUpdateTask: function() {
+              //Calculate the timeDiff we need to advance our physics simulation.
+              var newTime = Date.now();
+              var timeDiff = (newTime - this._lastUpdate) / 1000;
+              this._lastUpdate = newTime;
+
+              // do a step in the world.
+              this._world.Step(timeDiff, 5);
+
+              // For all our monsters registered in the world, let's handle
+              // movement updates and apply forces.
+              for(var key in this._registeredObjects) {
+                (function(body) {
+
+                  // Do our MonsterAiService call with updated position data.
+                  var position = metersToPixel(body.GetPosition());
+                  MonsterAiService.handleMovementUpdate(body.model, position);
+
+                  // Apply force at the monster's given angle for all monsters registered in the world.
+                  //console.log("update task applying force to ", body.model);
+                  var angle = body.model.direction;
+                  var force = new b2d.b2Vec2(
+                      Math.cos(angle) * DEFAULT_MONSTER_FORCE,
+                      Math.sin(angle) * DEFAULT_MONSTER_FORCE
+                  );
+                  body.ApplyForce(force, body.GetWorldCenter());
+
+                })(this._registeredObjects[key]);
+              }
+
+  Then also add a loop call to this method in the bottom of the init method.
+
+          init: function() {
+            ...
+
+            //creates an infite loop that iterates through stepping as fast as
+            // the processor can keep up.
+            var update = function() {
+              this.doUpdateTask();
+              setImmediate(update);
+            }.bind(this);
+
+            update();
+          }
+
+9. We'll add the implementation of `MonsterAiService.handleMovementUpdate()`.  It will take the
+new calculated position Monster provided by the `PhyicsService.js`.
+
+            handleMovementUpdate: function(monsterModel, position) {
+              // Monster will randomly change angles when collided.
+              // console.log("handling monster movement update", monsterModel, position);
+
+              // update all our models with new coordinates.
+              if (monsterModel.xPosition == position.x && monsterModel.yPosition == position.y) {
+                // monster hasn't moved since last update, change directions
+                monsterModel.direction = Math.random() * 2 * Math.PI;
+              } else {
+                // otherwise just update to the new position
+                monsterModel.xPosition = position.x;
+                monsterModel.yPosition = position.y;
+              }
+
+              monsterModel.save(function (err, savedMonsterModel) {
+                //Publish the update so any subscribed client will be updated.
+                if (!err) {
+                  try {
+                    Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
+                  } catch (e) {
+                    console.log("unable to publish update", e);
+                  }
+                }
+                else {
+                  console.log(err);
+                }
+              });
+            }

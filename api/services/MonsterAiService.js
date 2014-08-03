@@ -38,24 +38,26 @@ module.exports = {
 
     // update all our models with new coordinates.
     if (monsterModel.xPosition == position.x && monsterModel.yPosition == position.y) {
-      // moster hasn't moved, change directions
+      // monster hasn't moved since last update, change directions
       monsterModel.direction = Math.random() * 2 * Math.PI;
     } else {
+      // otherwise just update to the new position
       monsterModel.xPosition = position.x;
       monsterModel.yPosition = position.y;
     }
 
     monsterModel.save(function (err, savedMonsterModel) {
-      //Publish the update so any subscriber will be alerted.
-      if (!err)
+      //Publish the update so any subscribed client will be updated.
+      if (!err) {
         try {
           Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
-        } catch(e) {
+        } catch (e) {
           console.log("unable to publish update", e);
         }
-
-      else
+      }
+      else {
         console.log(err);
+      }
     });
   }
 };

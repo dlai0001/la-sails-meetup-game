@@ -85,6 +85,8 @@ module.exports = {
 
 
   doUpdateTask: function() {
+
+    //Calculate the timeDiff we need to advance our physics simulation.
     var newTime = Date.now();
     var timeDiff = (newTime - this._lastUpdate) / 1000;
     this._lastUpdate = newTime;
@@ -95,9 +97,11 @@ module.exports = {
 
     this._world.Step(timeDiff, 5);
 
+    // For all our monsters registered in the world, let's handle
+    // movement updates and apply forces.
     for(var key in this._registeredObjects) {
       (function(body) {
-
+        // Do our MonsterAiService call with updated position data.
         var position = metersToPixel(body.GetPosition());
         MonsterAiService.handleMovementUpdate(body.model, position);
 
