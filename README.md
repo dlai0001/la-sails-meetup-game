@@ -368,44 +368,44 @@ coordinates of all the bodies in the world.
           init: function() {
             ...
 
-            //creates an infite loop that iterates through stepping as fast as
-            // the processor can keep up.
+            //Schedule periodic updates to step the world
             var update = function() {
               this.doUpdateTask();
-              setImmediate(update);
+              setTimeout(update,20);
             }.bind(this);
 
             update();
-          }
+          },
+
 
 9. We'll add the implementation of `MonsterAiService.handleMovementUpdate()`.  It will take the
 new calculated position Monster provided by the `PhyicsService.js`.
 
-            handleMovementUpdate: function(monsterModel, position) {
-              // Monster will randomly change angles when collided.
-              // console.log("handling monster movement update", monsterModel, position);
+        handleMovementUpdate: function(monsterModel, position) {
+          // Monster will randomly change angles when collided.
+          // console.log("handling monster movement update", monsterModel, position);
 
-              // update all our models with new coordinates.
-              if (monsterModel.xPosition == position.x && monsterModel.yPosition == position.y) {
-                // monster hasn't moved since last update, change directions
-                monsterModel.direction = Math.random() * 2 * Math.PI;
-              } else {
-                // otherwise just update to the new position
-                monsterModel.xPosition = position.x;
-                monsterModel.yPosition = position.y;
+          // update all our models with new coordinates.
+          if (monsterModel.xPosition == position.x && monsterModel.yPosition == position.y) {
+            // monster hasn't moved since last update, change directions
+            monsterModel.direction = Math.random() * 2 * Math.PI;
+          } else {
+            // otherwise just update to the new position
+            monsterModel.xPosition = position.x;
+            monsterModel.yPosition = position.y;
+          }
+
+          monsterModel.save(function (err, savedMonsterModel) {
+            //Publish the update so any subscribed client will be updated.
+            if (!err) {
+              try {
+                Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
+              } catch (e) {
+                console.log("unable to publish update", e);
               }
-
-              monsterModel.save(function (err, savedMonsterModel) {
-                //Publish the update so any subscribed client will be updated.
-                if (!err) {
-                  try {
-                    Monster.publishUpdate(savedMonsterModel.id, savedMonsterModel);
-                  } catch (e) {
-                    console.log("unable to publish update", e);
-                  }
-                }
-                else {
-                  console.log(err);
-                }
-              });
             }
+            else {
+              console.log(err);
+            }
+          });
+        }

@@ -27,7 +27,7 @@ module.exports = {
     //Schedule periodic updates to step the world
     var update = function() {
       this.doUpdateTask();
-      setImmediate(update);
+      setTimeout(update,20);
     }.bind(this);
 
     update();
