@@ -10,7 +10,7 @@ http://www.google.com/moderator/#15/e=21174e&t=21174e.40
 SailsJS Build A Game Series - Day1
 ----------------------------------
 
-__Goal:__ Create a virtual world with 10 monsters moving about.  When we open the page, 
+__Goal:__ Create a virtual world with N monsters moving about.  When we open the page, 
 we will see multiple monsters moving around the screen in sync with the server in near real time.
 
 1. Setup for today's lesson.
@@ -23,7 +23,7 @@ we will see multiple monsters moving around the screen in sync with the server i
 
 
   Fetch the source for today's lesson.  For today, we'll be starting off with a pretty bare project skeleton
-  with SailsJS v0.10 beta, EmberJS 1.6, and an SailsSocketAdapter.  (see [Prelude](PRELUDE.md) for full details of the setup)
+  with SailsJS v0.10.4, EmberJS 1.6, and an SailsSocketAdapter.  (see [Prelude](PRELUDE.md) for full details of the setup)
   
 		    $> git clone git@github.com:dlai0001/la-sails-meetup-game.git
 		    $> git fetch
@@ -154,7 +154,6 @@ coordinates in the model.
 
         import Ember from 'ember';
 
-
         export default Ember.ArrayController.extend({
           itemController: 'monster'
         });
@@ -225,16 +224,17 @@ coordinates in the model.
 		    });
 		  });
 		
-		  // schedule the next update
-		  setImmediate(function() {
+		  // schedule the next update in 50ms.  This will create a sort of infinite loop of scheduled
+      // updates.
+		  setTimeout(function() {
 		    this.updateMonster();
-		  }.bind(this));
+		  }.bind(this), 50);
 		
 		};
 
   In `/config/bootstrap.js`, let's start our service.  `bootstrap.js` is a special config file 
-  that runs at the start of a SailsJS app starting up.  It's a good place to put any 
-  calls to initialization and task scheduling items.
+  that runs at during the start-up of a SailsJS app.  It's a good place to put any calls to 
+  initialization and task scheduling items.
 
             //Add update monster call before cb()
             MonsterAiService.updateMonster();
